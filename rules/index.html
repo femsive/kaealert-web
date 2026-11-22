@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; form-action 'none'; base-uri 'none'; connect-src 'none'">
+  <title>깨알 규칙 만들기</title>
+  <link rel="stylesheet" href="../assets/rule-exchange/style.css">
+  <script type="module" src="../assets/rule-exchange/main.mjs"></script>
+</head>
+<body>
+  <header class="top">
+    <div class="shell top-content">
+      <a class="wordmark" href="../">깨알</a>
+      <nav class="site-nav" aria-label="주 메뉴">
+        <a href="../rules/" aria-current="page">규칙 만들기</a>
+        <a href="../help/">도움말</a>
+        <a href="../help/#faq">FAQ</a>
+        <a href="../ai-guide/">AI 지침</a>
+        <a href="../privacy/">개인정보처리방침</a>
+      </nav>
+    </div>
+  </header>
+  <main class="shell">
+    <div class="intro">
+      <h1>알림 규칙 만들기</h1>
+      <p>조건을 작성하고 예시 알림으로 시험한 뒤 규칙 JSON을 복사하세요.</p>
+      <p class="hint">교환 규격 v1. Play Alpha 4에서는 규칙 JSON을 가져올 수 없습니다. 웹에서는 비활성 규칙도 시험할 수 있습니다. Android에서는 켜진 규칙만 적용됩니다. <a href="../help/#web">사용 방법</a></p>
+    </div>
+    <noscript>이 도구를 사용하려면 JavaScript가 필요합니다.</noscript>
+    <div class="layout">
+      <section class="card editor" aria-labelledby="rule-heading">
+        <h2 id="rule-heading">규칙 설정</h2>
+        <form id="rule-form" novalidate>
+          <label for="rule-name">규칙 이름</label>
+          <input id="rule-name" placeholder="예: 연결 끊김" autocomplete="off">
+          <div class="fields">
+            <div>
+              <label for="rule-scope">대상 범위</label>
+              <select id="rule-scope"><option value="common">공통 규칙</option><option value="app">앱별 규칙</option></select>
+            </div>
+            <div>
+              <label for="rule-action">일치 시 동작</label>
+              <select id="rule-action"><option value="ALERT">알람 울리기</option><option value="SUPPRESS">무시하기</option></select>
+            </div>
+          </div>
+          <div id="package-field" hidden>
+            <label for="rule-package">대상 패키지</label>
+            <input id="rule-package" placeholder="com.example.app" autocomplete="off" spellcheck="false">
+          </div>
+          <label class="check"><input id="rule-enabled" type="checkbox"> 교환할 규칙을 활성 상태로 표시</label>
+          <div class="section-divider">
+            <div class="heading-line">
+              <h3>일치 조건</h3>
+              <span id="condition-count" class="hint"></span>
+            </div>
+            <label for="rule-match">조건 조합</label>
+            <select id="rule-match"><option value="ALL">모든 조건</option><option value="ANY">조건 중 하나</option></select>
+            <div id="conditions"></div>
+            <button type="button" class="secondary" id="add-condition">조건 추가</button>
+          </div>
+          <div class="actions">
+            <button type="submit">JSON 만들기</button>
+            <span id="form-status" class="status" role="status"></span>
+          </div>
+        </form>
+      </section>
+      <div class="stack">
+        <section class="card" aria-labelledby="trial-heading">
+          <h2 id="trial-heading">예시 알림 시험</h2>
+          <p class="hint">웹에서 입력한 문자열만 비교합니다. 실제 Android 알림 수신과 경보는 별도입니다.</p>
+          <form id="trial-form" novalidate>
+            <div id="sample-package-field" hidden>
+              <label for="sample-package">시험 패키지</label>
+              <input id="sample-package" autocomplete="off" spellcheck="false">
+            </div>
+            <label for="sample-title">시험 제목</label>
+            <textarea id="sample-title" rows="1" placeholder="예: 연결 상태" spellcheck="false"></textarea>
+            <label class="check small"><input id="title-missing" type="checkbox"> 제목 누락</label>
+            <label for="sample-body">시험 본문</label>
+            <textarea id="sample-body" rows="2" placeholder="예: 서버 OFFLINE" spellcheck="false"></textarea>
+            <label class="check small"><input id="body-missing" type="checkbox"> 본문 누락</label>
+            <label class="check small"><input id="sample-escaped" type="checkbox"> 시험 입력을 JSON 문자열로 해석</label>
+            <div class="actions"><button type="submit" class="secondary">일치 시험</button></div>
+            <div id="trial-status" class="status" role="status"></div>
+          </form>
+        </section>
+        <section class="card" aria-labelledby="exchange-heading">
+          <div class="heading-line">
+            <h2 id="exchange-heading">규칙 JSON</h2>
+            <button id="copy" type="button" class="secondary" disabled>전체 복사</button>
+          </div>
+          <label for="output">생성 결과</label>
+          <textarea id="output" class="code" rows="6" readonly spellcheck="false" placeholder="유효한 규칙을 만들면 여기에 표시됩니다."></textarea>
+          <div id="copy-status" class="status" role="status"></div>
+          <details>
+            <summary>JSON 붙여넣기</summary>
+            <label for="json-input">교환 규칙 JSON</label>
+            <textarea id="json-input" class="code" rows="4" spellcheck="false"></textarea>
+            <button id="load" type="button" class="secondary">검사하고 불러오기</button>
+            <div id="load-status" class="status" role="status"></div>
+          </details>
+        </section>
+      </div>
+    </div>
+  </main>
+  <template id="condition-template">
+    <fieldset>
+      <legend></legend>
+      <div class="fields">
+        <label>비교 대상
+          <select data-field><option value="BODY">본문</option><option value="TITLE">제목</option><option value="TITLE_OR_BODY">제목 또는 본문</option></select>
+        </label>
+        <label>비교 방식
+          <select data-op><option value="CONTAINS">포함</option><option value="EQUALS">정확히 같음</option><option value="NOT_CONTAINS">포함하지 않음</option><option value="REGEX">정규식</option></select>
+        </label>
+      </div>
+      <label>조건 값 <textarea data-value rows="2" placeholder="예: OFFLINE" spellcheck="false"></textarea></label>
+      <div class="heading-line condition-actions">
+        <span data-value-note class="hint" hidden>줄바꿈을 보존하려면 JSON 문자열 표기로 편집하세요.</span>
+        <button type="button" class="text-button" data-remove>삭제</button>
+      </div>
+    </fieldset>
+  </template>
+</body>
+</html>

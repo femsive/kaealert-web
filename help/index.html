@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; form-action 'none'; base-uri 'none'; connect-src 'none'">
+  <title>깨알 도움말과 FAQ</title>
+  <link rel="stylesheet" href="../assets/rule-exchange/style.css">
+</head>
+<body>
+  <header class="top">
+    <div class="shell top-content">
+      <a class="wordmark" href="../">깨알</a>
+      <nav class="site-nav" aria-label="주 메뉴">
+        <a href="../rules/">규칙 만들기</a>
+        <a href="../help/" aria-current="page">도움말</a>
+        <a href="../help/#faq">FAQ</a>
+        <a href="../ai-guide/">AI 지침</a>
+        <a href="../privacy/">개인정보처리방침</a>
+      </nav>
+    </div>
+  </header>
+  <main class="shell guide">
+    <div class="intro">
+      <h1>깨알 도움말</h1>
+      <p>감시 앱을 등록하고, 필요한 알림에만 깨알 경보를 설정하세요.</p>
+    </div>
+    <div class="guide-stack">
+      <section class="card" aria-labelledby="start">
+        <h2 id="start">처음 설정하기</h2>
+        <ol>
+          <li>깨알에서 <strong>알림 접근 설정 열기</strong>를 선택하고 Android 설정에서 깨알의 접근을 허용합니다.</li>
+          <li>홈의 감시 앱 목록에서 추가할 앱을 선택합니다. 감시 앱의 개별 스위치도 확인하세요.</li>
+          <li>새 규칙에 이름, 감시 범위, 조건과 동작을 설정하고 사용 상태를 확인합니다. 준비가 끝나면 전체 감시를 켭니다.</li>
+        </ol>
+        <p>원래 앱의 알림음은 그 앱과 Android가 관리합니다. 깨알 경보는 알림을 받은 뒤 규칙과 일정 등의 판정을 거쳐 따로 울립니다.</p>
+      </section>
+      <section class="card" aria-labelledby="rules">
+        <h2 id="rules">규칙 작성하기</h2>
+        <p><strong>앱별 규칙</strong>은 해당 감시 앱에만 적용됩니다. <strong>공통 규칙</strong>은 모든 감시 앱에 적용될 수 있습니다. 규칙의 이름과 사용 상태를 확인하세요.</p>
+        <p>한글, 이모지, 기호를 그대로 찾을 때는 <strong>포함</strong>을 사용하세요. 예를 들어 본문에 <code>🚨 장애</code>가 포함될 때 일치하도록 만들 수 있습니다. <strong>포함하지 않음</strong>을 함께 쓰면 제외할 단어를 정할 수 있습니다. 포함과 제외가 모두 충족되어야 한다면 <strong>모든 조건</strong>을 선택합니다.</p>
+        <p>패턴이 필요하면 정규식을 사용하세요. 예를 들어 웹 v1에서 <code>WARN-[0-9]{2}</code>는 <code>새 알림 WARN-07</code>의 일부에 일치합니다. <strong>제목 또는 본문</strong>은 두 값을 각각 비교합니다. 제목 끝과 본문 시작을 이어서 찾지 않습니다.</p>
+        <p>여러 규칙이 일치하면 앱의 평가 순서와 계속·중단 설정이 적용됩니다. 계속 평가하는 규칙의 결과는 뒤의 일치가 바꿀 수 있습니다. 연결한 일정이 꺼져 있거나 활성 구간 밖이면 그 규칙은 건너뜁니다.</p>
+      </section>
+      <section class="card" aria-labelledby="web">
+        <h2 id="web">웹 규칙 생성기 쓰기</h2>
+        <ol>
+          <li><a href="../rules/">규칙 만들기</a>에서 이름·범위·조건·동작을 정한 뒤 <strong>JSON 만들기</strong>를 누릅니다.</li>
+          <li>기존 v1 JSON이 있다면 <strong>JSON 붙여넣기</strong>에서 검사하고 폼으로 불러옵니다.</li>
+          <li>예시 제목·본문으로 일치와 미일치를 확인합니다. 유효한 결과는 <strong>전체 복사</strong>로 보관할 수 있습니다.</li>
+        </ol>
+        <p>웹은 v1의 제한된 문법과 입력한 문자열을 시험합니다. Android가 실제로 전달하는 제목·본문과 앱의 일정·권한·경보 상태는 휴대폰에서 확인해야 합니다. 시험할 때는 개인 알림 대신 합성 예시를 사용하세요.</p>
+        <p>Play Alpha 0.1.1 (4)에서는 규칙 전용 JSON을 가져올 수 없습니다. 웹 결과를 참고해 앱의 규칙 화면에 조건을 직접 입력하세요. Backup v7은 규칙과 일정을 교체하는 별도의 복원 기능입니다.</p>
+      </section>
+      <section class="card" id="faq" aria-labelledby="faq-heading">
+        <h2 id="faq-heading">자주 묻는 질문</h2>
+        <div class="faq">
+          <details><summary>감시할 앱을 어떻게 등록하나요?</summary><p>깨알 홈의 감시 앱 추가 화면에서 설치된 앱을 선택해 등록하세요. 앱 등록과 Android 알림 접근 허용은 각각 확인해야 합니다.</p></details>
+          <details><summary>알림 접근 권한은 왜 필요한가요?</summary><p>다른 앱이 게시한 Android 알림의 제목과 본문을 깨알이 받아 조건을 판정하는 데 필요합니다. 감시 대상 앱을 등록해도 이 권한은 자동으로 허용되지 않습니다.</p></details>
+          <details><summary>전체 감시가 꺼져 있으면 어떻게 되나요?</summary><p>깨알은 새 수신 알림의 감시를 중단합니다. 원래 앱의 알림은 해당 앱과 Android 설정에 따라 계속 표시될 수 있습니다.</p></details>
+          <details><summary>규칙이 일치하는데 알람이 울리지 않으면?</summary><p>먼저 원래 앱 알림이 Android에 도착했는지 확인하세요. 깨알의 알림 접근, 전체 감시와 앱별 스위치, 규칙 활성 상태와 동작, 다른 규칙의 판정 순서, 일정, 알람 출력과 음량을 차례로 확인하세요. 깨알 이력에서 최종 판정과 알람 상태를 볼 수 있습니다.</p></details>
+          <details><summary>일정이 있으면 언제 알람이 동작하나요?</summary><p>규칙에 연결한 일정의 활성 구간 안에서 그 규칙을 평가합니다. 감시와 권한, 규칙 동작 같은 나머지 조건도 충족해야 합니다.</p></details>
+          <details><summary>일반 알림 게시 권한과 알림 접근 권한은 무엇이 다른가요?</summary><p>일반 알림 게시 권한은 깨알이 자체 알림을 표시하는 데 사용합니다. 알림 접근 권한은 깨알이 다른 앱의 Android 알림을 읽는 데 사용합니다.</p></details>
+          <details><summary>무료 사용자도 규칙을 만들 수 있나요?</summary><p>네. 무료 사용자도 앱에서 규칙을 만들 수 있습니다. 이 로컬 도구는 구매 상태를 확인하지 않습니다.</p></details>
+          <details><summary>무료 규칙 개수 제한은 얼마인가요?</summary><p>사용자 규칙 5개입니다. 공통·앱별 규칙과 활성·비활성 규칙을 함께 셉니다.</p></details>
+          <details><summary>웹에서 만든 JSON을 지금 앱에 가져올 수 있나요?</summary><p>Play Alpha 0.1.1 (4)에는 규칙 JSON 가져오기가 없습니다. 앱에서 직접 작성할 때 웹 결과를 참고하세요. 백업 복원에는 백업 파일을 사용합니다.</p></details>
+          <details><summary>JSON이 유효한데 앱에서 사용할 수 없는 이유는 무엇인가요?</summary><p>유효하다는 표시는 웹이 v1 형식과 조건을 검사했다는 뜻입니다. 앱의 가져오기 지원 버전, 기기에 등록된 소스, 무료 규칙 한도, 실제 알림 내용은 별도로 확인해야 합니다.</p></details>
+          <details><summary>이미지 알림이나 본문 없는 알림은 어떻게 처리하나요?</summary><p>깨알이 평가하는 제목과 본문은 앱이 Android 알림에 넣은 값에 따라 달라집니다. 이미지의 글자를 읽는 기능으로 볼 수 없습니다. 본문이 누락된 경우 본문 포함 조건은 일치하지 않습니다. 제목이 제공되면 제목 조건으로 시험해 보세요.</p></details>
+          <details><summary>제조사별 배터리 제한이 영향을 줄 수 있나요?</summary><p>Android 버전과 제조사에 따라 백그라운드 제한의 동작과 설정 위치가 다를 수 있습니다. 알림이 빠진 경우 원래 앱 알림과 깨알 이력부터 비교하고, 필요하면 기기 설정에서 백그라운드 제한 상태를 확인하세요.</p></details>
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

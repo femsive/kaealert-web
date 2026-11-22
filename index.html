@@ -3,180 +3,54 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light dark">
-  <title>깨알(KaeAlert) 개인정보처리방침</title>
-  <style>
-    :root {
-      color-scheme: light dark;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.65;
-    }
-    body {
-      margin: 0;
-      background: Canvas;
-      color: CanvasText;
-    }
-    main {
-      box-sizing: border-box;
-      width: min(100%, 52rem);
-      margin: 0 auto;
-      padding: 2rem 1.25rem 4rem;
-    }
-    h1 { line-height: 1.25; }
-    h2 { margin-top: 2.25rem; }
-    h3 { margin-top: 1.5rem; }
-    a { color: LinkText; overflow-wrap: anywhere; }
-    .effective-date { font-weight: 600; }
-    @media (max-width: 32rem) {
-      main { padding-top: 1.25rem; }
-      h1 { font-size: 1.75rem; }
-    }
-  </style>
+  <meta name="description" content="깨알 알림 규칙을 만들고 예시 알림으로 시험하세요. 앱 설정 도움말과 AI용 규칙 작성 지침을 제공합니다.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; form-action 'none'; base-uri 'none'; connect-src 'none'">
+  <title>KAEALert(깨알)</title>
+  <link rel="stylesheet" href="./assets/rule-exchange/style.css">
 </head>
 <body>
-<main>
-  <h1>깨알(KaeAlert) 개인정보처리방침</h1>
-
-  <p>깨알(KaeAlert, 이하 “앱”)은 사용자의 개인정보와 알림 데이터를 중요하게 생각합니다.</p>
-  <p>본 개인정보처리방침은 앱이 어떤 정보에 접근하고, 해당 정보를 어떤 목적으로 사용하며, 외부 서비스와 어떤 정보가 처리될 수 있는지 설명합니다.</p>
-  <p class="effective-date">시행일: 2026-11-13</p>
-
-  <h2>1. 앱이 처리하는 정보</h2>
-
-  <h3>1.1 알림 정보</h3>
-  <p>앱은 사용자가 직접 알림 접근 권한을 허용한 경우, 사용자가 선택한 앱의 알림을 감지할 수 있습니다.</p>
-  <p>앱은 이러한 알림 정보를 다음 목적으로 사용합니다.</p>
-  <ul>
-    <li>사용자가 설정한 조건에 따른 알림 판정</li>
-    <li>알람 실행 또는 억제</li>
-    <li>일정에 따른 규칙 적용</li>
-    <li>알림 처리 결과 확인</li>
-  </ul>
-  <p>알림 내용은 앱의 기능 수행을 위해 기기에서 처리됩니다.</p>
-  <p>현재 앱 개발자는 알림 원문을 자체 서버로 전송하거나 별도로 수집하지 않습니다.</p>
-
-  <h3>1.2 사용자가 설정한 규칙 및 일정</h3>
-  <p>앱은 다음과 같은 사용자 설정을 기기 내부에 저장할 수 있습니다.</p>
-  <ul>
-    <li>알람 규칙</li>
-    <li>조건 및 정규식</li>
-    <li>반복 일정의 기준 날짜와 반복 간격(일 단위)</li>
-    <li>특정 날짜 일정에서 선택한 연월일 목록과 공통 시간 구간</li>
-    <li>매월 반복할 일자 번호와 반복 시작·종료 날짜</li>
-    <li>알람 동작 설정</li>
-    <li>알람 또는 알림만 표시 전달 방식</li>
-    <li>일정 및 반복 일정</li>
-    <li>감시 대상 앱 설정</li>
-    <li>사용자가 선택한 로컬 오디오 파일의 URI 및 표시 이름</li>
-    <li>이전 버전에서 선택한 외부 재생 앱의 식별 정보(호환성을 위해 남아 있을 수 있으나 외부 앱 재생에는 사용하지 않음)</li>
-    <li>기타 앱 사용에 필요한 설정</li>
-  </ul>
-  <p>규칙의 조건 값에는 사용자가 입력한 알림 문구나 운영 환경 관련 정보가 포함될 수 있습니다.</p>
-  <p>이 정보는 현재 앱 개발자의 서버로 자동 전송되지 않습니다.</p>
-
-  <h3>1.3 알림 처리 이력</h3>
-  <p>앱은 알림을 어떻게 처리했는지 사용자가 확인할 수 있도록 처리 이력을 기기 내부에 저장합니다.</p>
-  <p>처리 이력에는 다음과 같은 정보가 포함될 수 있습니다.</p>
-  <ul>
-    <li>처리 시각</li>
-    <li>알림 처리 요약</li>
-    <li>규칙 판정 결과</li>
-    <li>일정 적용 상태</li>
-    <li>알람 실행 또는 알림 게시 요청 결과</li>
-    <li>내부 진단용 상태 정보</li>
-  </ul>
-  <p>“알림만 표시”를 선택하면 앱은 기기의 알림 기능으로 일반적인 안내 알림을 표시합니다. 이 알림에 원본 알림 제목·내용·발신자·채팅방을 추가하지 않습니다. 이 기능은 외부 서버의 푸시 전송을 사용하지 않으며, 알림 표시 여부와 채널의 소리·진동은 Android 권한 및 사용자 시스템 설정의 영향을 받습니다.</p>
-  <p>앱은 알림 원문 전체를 처리 이력에 저장하지 않도록 설계되어 있습니다.</p>
-  <p>처리 이력은 기기 내부에 최대 5,000건까지 저장될 수 있으며, 오래된 항목부터 자동으로 정리될 수 있습니다.</p>
-
-  <h3>1.4 알림 처리 경고 요약</h3>
-  <p>앱은 알림 처리 문제를 안내하기 위해 미확인 건수, 문제 종류, 분 단위 기록 시각으로 구성된 익명 경고 요약을 기기 내부에 저장할 수 있습니다. 이 요약에는 알림 제목·내용, 발신자, 감시 앱 식별 정보를 포함하지 않으며 개발자 서버로 전송하지 않습니다.</p>
-  <p>미확인 요약은 사용자가 경고를 확인할 때까지 보관하며, 앱 데이터 삭제 또는 앱 제거 시에도 삭제됩니다. 경고 확인은 미처리 알림을 복구하거나 알람을 중지하는 동작이 아닙니다. 경고 요약은 앱의 구성 백업과 Android 백업·기기 전송 대상에서 제외하도록 설정되어 있습니다.</p>
-  <p>현재 실행 중의 진단 계수는 메모리에서만 유지합니다. 비동기 저장이 끝나기 전에 앱 프로세스가 종료되면 최신 경고 요약이 남지 않을 수 있습니다.</p>
-
-  <h2>2. 알림 접근 권한</h2>
-  <p>앱의 핵심 기능을 사용하려면 Android의 알림 접근 권한이 필요할 수 있습니다.</p>
-  <p>이 권한은 사용자가 선택한 앱에서 발생한 알림을 감지하고, 사용자가 설정한 규칙과 일정에 따라 알람 실행 여부를 판단하기 위해 사용됩니다.</p>
-  <p>사용자는 Android 설정에서 언제든지 알림 접근 권한을 해제할 수 있습니다. 권한을 해제하면 관련 기능이 정상적으로 동작하지 않을 수 있습니다.</p>
-
-  <h2>3. 알림 및 백그라운드 동작</h2>
-  <p>앱은 알람이 실행되는 동안 Android의 Foreground Service 기능을 사용할 수 있습니다.</p>
-  <p>또한 알람 상태를 표시하고 사용자가 알람을 중지할 수 있도록 Android 알림 기능을 사용할 수 있습니다.</p>
-  <p>이 기능은 광고 표시나 개인정보 수집을 위한 것이 아니라 앱의 알람 기능을 제공하기 위해 사용됩니다.</p>
-
-  <h2>4. 설정 내보내기 및 가져오기</h2>
-  <p>Pro 기능을 통해 사용자는 규칙과 일정 등의 설정을 파일로 직접 내보내거나 다시 가져올 수 있습니다.</p>
-  <p>내보낸 백업 파일에는 다음 정보가 포함될 수 있습니다.</p>
-  <ul>
-    <li>사용자 규칙</li>
-    <li>조건 값</li>
-    <li>정규식</li>
-    <li>일정</li>
-    <li>규칙과 일정의 연결 정보</li>
-  </ul>
-  <p>백업 파일에는 운영 환경에 관한 민감한 정보가 포함될 수 있으므로 사용자가 직접 안전하게 보관해야 합니다.</p>
-  <p>현재 백업 파일은 Android Storage Access Framework를 통해 사용자가 직접 선택한 위치에 평문 JSON 형식으로 저장되며, 앱 개발자의 서버로 자동 업로드되지 않습니다. 사용자가 클라우드 저장소 제공자를 선택한 경우 해당 제공자의 정책에 따라 파일이 동기화될 수 있습니다.</p>
-  <p>백업에는 알림 처리 이력, 구매 정보, 광고 정보, 비밀번호, 서명키 등의 정보가 포함되지 않습니다.</p>
-  <h3>Android 자동 백업 및 기기 이전</h3>
-  <p>앱은 Android OS의 클라우드 자동 백업과 기기 간 데이터 이전에서 앱의 데이터베이스, 설정 및 앱 전용 파일을 제외하도록 설정합니다. 이는 사용자가 직접 실행하는 설정 내보내기와 별개입니다. 앱을 새로 설치하거나 기기를 바꾸면 감시 앱 등록, 알람 설정과 권한을 다시 확인해야 하며, 구매 권한은 Google Play에서 다시 확인합니다.</p>
-  <p>이 설정은 과거 버전에서 이미 생성된 OS 백업을 삭제하는 기능이 아닙니다. 실제 이전 동작은 Android 버전과 기기 제조사의 구현에 따라 달라질 수 있습니다. 사용자가 직접 내보낸 파일과 클라우드 문서 제공자의 보관 정책도 별도로 적용됩니다.</p>
-
-  <h2>5. 광고</h2>
-  <p>무료 버전에서는 Google AdMob을 이용한 광고가 표시될 수 있습니다.</p>
-  <p>광고가 활성화된 구성에서는 홈, 규칙·일정·설정의 기본 화면, 일반 알람 설정 및 앱별 설정 화면 하단에 배너를 표시할 수 있습니다. 규칙·일정 편집, 선택기·대화상자, 권한·동의·결제·복원 확인 과정에는 광고를 표시하지 않습니다.</p>
-  <p>광고 제공 과정에서 Google Mobile Ads SDK 등 Google의 서비스가 다음과 같은 정보를 처리할 수 있습니다.</p>
-  <ul>
-    <li>IP 주소를 기반으로 한 대략적인 위치 정보</li>
-    <li>앱 상호작용 정보</li>
-    <li>진단 정보</li>
-    <li>기기 또는 기타 식별자</li>
-  </ul>
-  <p>실제 처리되는 정보는 사용자의 지역, 기기 설정, 동의 상태 및 Google 서비스 정책에 따라 달라질 수 있습니다.</p>
-  <p>앱은 알림 원문, 규칙의 조건 값, 알림 처리 이력 등을 광고 맞춤 설정을 위한 별도 targeting 정보로 전달하지 않습니다.</p>
-  <p>Pro 사용자는 광고가 표시되지 않습니다. 현재 출시 구성에서는 광고 표시가 비활성화되어 있으며, 광고 SDK가 포함되어 있다는 사실만으로 광고가 요청되는 것은 아닙니다.</p>
-  <p>Google의 개인정보 처리 방식에 대한 자세한 내용은 Google의 개인정보처리방침 및 광고 관련 정책을 참고하시기 바랍니다.</p>
-
-  <h2>6. 광고 동의 및 개인정보 설정</h2>
-  <p>앱은 필요한 지역에서 광고 관련 동의 및 개인정보 설정을 제공하기 위해 Google User Messaging Platform(UMP)을 사용할 수 있습니다.</p>
-  <p>사용 가능한 경우 사용자는 앱의 설정 화면에서 광고 관련 개인정보 설정을 확인하거나 변경할 수 있습니다.</p>
-  <p>광고 동의 기능에 문제가 발생하더라도 앱의 핵심 알람 기능이 중단되지 않도록 설계되어 있습니다.</p>
-
-  <h2>7. 인앱 구매</h2>
-  <p>앱은 KaeAlert Pro와 같은 유료 기능 제공을 위해 Google Play Billing을 사용할 수 있습니다.</p>
-  <p>구매 및 결제 정보는 Google Play를 통해 처리됩니다.</p>
-  <p>앱은 구매 상태 확인을 위해 Google Play Billing이 제공하는 구매 정보를 처리할 수 있으나, 구매 토큰이나 주문 정보를 알림 처리 이력이나 일반 진단 정보에 저장하지 않습니다.</p>
-  <p>앱 개발자는 사용자의 결제 카드 번호와 같은 결제수단 정보를 직접 처리하지 않습니다.</p>
-
-  <h2>8. 개발자 서버 및 외부 전송</h2>
-  <p>현재 앱은 알림 원문, 사용자 규칙, 일정 및 알림 처리 이력을 앱 개발자가 운영하는 서버로 자동 전송하지 않습니다.</p>
-  <p>다만 다음과 같은 제3자 서비스가 자체 정책에 따라 필요한 정보를 처리할 수 있습니다.</p>
-  <ul>
-    <li>Google Play Billing</li>
-    <li>Google AdMob</li>
-    <li>Google User Messaging Platform</li>
-  </ul>
-  <p>각 서비스에서 처리되는 정보에는 해당 서비스 제공자의 개인정보처리방침이 적용될 수 있습니다.</p>
-
-  <h2>9. 정보의 보관 및 삭제</h2>
-  <p>규칙, 일정, 알림 처리 이력 등의 앱 데이터는 사용자의 기기에 저장됩니다.</p>
-  <p>사용자는 앱에서 제공하는 기능을 통해 일부 설정이나 기록을 변경 또는 삭제할 수 있습니다.</p>
-  <p>앱을 삭제하거나 Android에서 앱 데이터를 삭제하는 경우 기기에 저장된 앱 데이터가 삭제될 수 있습니다.</p>
-  <p>사용자가 별도로 내보낸 백업 파일은 앱 삭제 시 자동으로 삭제되지 않을 수 있으며 사용자가 직접 관리해야 합니다.</p>
-
-  <h2>10. 아동의 개인정보</h2>
-  <p>현재 앱은 아동을 대상으로 특별히 설계된 서비스가 아닙니다.</p>
-  <p>Google Play의 대상 연령 및 관련 정책에 따라 앱의 최종 배포 설정이 구성될 예정입니다.</p>
-  <p>향후 대상 연령 또는 서비스 성격이 변경되는 경우 관련 정책과 본 개인정보처리방침을 함께 검토합니다.</p>
-
-  <h2>11. 개인정보처리방침의 변경</h2>
-  <p>앱의 기능, 사용하는 외부 서비스 또는 개인정보 처리 방식이 변경되는 경우 본 개인정보처리방침이 변경될 수 있습니다.</p>
-  <p>중요한 변경이 있는 경우 수정된 개인정보처리방침의 시행일을 갱신하며, 필요한 경우 앱이나 스토어를 통해 변경사항을 안내할 수 있습니다.</p>
-  <p>단순한 UI 변경이나 개인정보 처리와 관계없는 기능 개선만으로 본 방침이 반드시 변경되는 것은 아닙니다.</p>
-
-  <h2>12. 문의</h2>
-  <p>앱 및 개인정보 보호와 관련한 문의는 아래 연락처로 할 수 있습니다.</p>
-  <p>개발자: femsive<br>앱: 깨알(KaeAlert)<br>이메일: <a href="mailto:femsive.support@gmail.com">femsive.support@gmail.com</a></p>
-  <p>본 개인정보처리방침은 실제 앱 기능과 데이터 처리 방식을 기준으로 작성되며, 앱의 기능이나 외부 서비스 사용 방식이 변경되는 경우 함께 검토됩니다.</p>
-</main>
+  <header class="top">
+    <div class="shell top-content">
+      <a class="wordmark" href="./" aria-current="page">깨알</a>
+      <nav class="site-nav" aria-label="주 메뉴">
+        <a href="./rules/">규칙 만들기</a>
+        <a href="./help/">도움말</a>
+        <a href="./help/#faq">FAQ</a>
+        <a href="./ai-guide/">AI 지침</a>
+        <a href="./privacy/">개인정보처리방침</a>
+      </nav>
+    </div>
+  </header>
+  <main class="shell home">
+    <section class="home-hero" aria-labelledby="home-title">
+      <div class="home-intro">
+        <h1 id="home-title">KAEALert<span>(깨알)</span></h1>
+        <p>깨알은 선택한 Android 앱의 알림이 설정한 조건과 일치할 때 경보를 울립니다.</p>
+        <div class="home-actions">
+          <a class="home-primary" href="./rules/">알림 규칙 만들기</a>
+          <a class="home-secondary" href="./help/#start">앱 설정 방법</a>
+        </div>
+        <p class="home-note">웹에서 규칙을 만들고 시험할 수 있습니다. Play Alpha 4에서는 규칙 JSON을 가져올 수 없습니다.</p>
+      </div>
+      <section class="home-example" aria-labelledby="example-title">
+        <h2 id="example-title">규칙 예시</h2>
+        <dl>
+          <div><dt>알림 본문</dt><dd><samp>서버 OFFLINE</samp></dd></div>
+          <div><dt>조건</dt><dd>본문에 <code>OFFLINE</code> 포함</dd></div>
+          <div><dt>일치 시</dt><dd>알람 울리기</dd></div>
+        </dl>
+      </section>
+    </section>
+    <div class="home-reference">
+      <section aria-labelledby="home-ai">
+        <h2 id="home-ai"><a href="./ai-guide/">AI 규칙 작성 지침</a></h2>
+        <p>원하는 AI에 붙여넣을 지침과 규칙 JSON 예제를 확인하세요.</p>
+      </section>
+      <section aria-labelledby="home-privacy">
+        <h2 id="home-privacy"><a href="./privacy/">개인정보처리방침</a></h2>
+        <p>깨알이 처리하는 정보와 보관·삭제 방식을 확인하세요.</p>
+      </section>
+    </div>
+  </main>
 </body>
 </html>
