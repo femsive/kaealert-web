@@ -1,4 +1,6 @@
 import { ACTIONS, ExchangeError, MAX_CONDITIONS, parseExchange, serializeRule, testRule } from './exchange.mjs';
+import { errorText, localize, t, translateTree } from './i18n.mjs';
+import { bindMixed } from './mixed-form.mjs';
 import { bindCopy } from './copy.mjs';
 import { MAX_INTERVALS, serializeSelection, WEEKDAYS } from './schedule-exchange.mjs';
 
@@ -16,7 +18,7 @@ let revision = 0;
 
 function show(id, message = '', tone = '') {
   const status = byId(id);
-  status.textContent = message;
+  localize(status, typeof message === 'function' ? message : () => t(message));
   status.dataset.tone = tone;
 }
 
@@ -27,7 +29,7 @@ function showError(id, error) {
     REGEX_UNSUPPORTED: '미지원 정규식 문법',
   };
   const location = error.path === '$' ? '' : error.path + ' · ';
-  show(id, location + (labels[error.code] ? labels[error.code] + ' · ' : '') + error.message, 'error');
+  show(id, () => location + (labels[error.code] ? t(labels[error.code]) + ' · ' : '') + errorText(error.message), 'error');
 }
 
 function invalidate() {
@@ -52,10 +54,10 @@ function updateConditionControls() {
   byId('condition-count').textContent = rows.length + ' / ' + MAX_CONDITIONS;
   byId('add-condition').disabled = rows.length >= MAX_CONDITIONS;
   rows.forEach((row, index) => {
-    row.querySelector('legend').textContent = '조건 ' + (index + 1);
+    localize(row.querySelector('legend'), () => t('조건 {number}', { number: index + 1 }));
     const remove = row.querySelector('[data-remove]');
     remove.disabled = rows.length === 1;
-    remove.setAttribute('aria-label', '조건 ' + (index + 1) + ' 삭제');
+    localize(remove, () => t('조건 {number} 삭제', { number: index + 1 }), 'aria-label');
   });
 }
 
@@ -95,6 +97,7 @@ function addCondition(data = { field: 'BODY', op: 'CONTAINS', value: '' }) {
     invalidate();
     focusTo?.querySelector('[data-field]').focus();
   });
+  translateTree(row);
   conditions.append(row);
   updateConditionControls();
   return field;
@@ -129,11 +132,16 @@ function renderJson(text) {
   output.value = text;
   copy.disabled = false;
   show('copy-status');
-  const schedule = JSON.parse(text).schedule;
+  const result = JSON.parse(text);
+  if (result.formatVersion === 3) {
+    show('compatibility-status', 'JSON v3 지원 앱이 필요합니다. 대한민국 Google Play 비공개 테스트 Alpha 0.1.5 (8)에서 가져오기를 확인했습니다. Alpha 7 등 이전 버전에서는 앱이 지원하는 v1·v2를 사용하세요. Free는 규칙 합산 5개·일정 3개이며 반복 일정 추가에는 Pro가 필요합니다.');
+    return;
+  }
+  const schedule = result.schedule;
   const compatibility = schedule
     ? 'JSON v2 · Google Play 비공개 테스트 깨알 Alpha 0.1.3 (6)에서 지원합니다. 앱에서 저장할 때 규칙과 일정 한도를 확인합니다.'
     : 'JSON v1 · 깨알 Alpha 0.1.2 (5)부터 규칙 가져오기를 지원합니다. 앱에서 저장 한도를 확인합니다.';
-  show('compatibility-status', compatibility + (schedule?.recurrence ? ' 반복 일정 추가에는 Pro가 필요합니다.' : ''));
+  show('compatibility-status', () => t(compatibility) + (schedule?.recurrence ? ' ' + t('반복 일정 추가에는 Pro가 필요합니다.') : ''));
 }
 
 function syncModes() {
@@ -142,7 +150,9 @@ function syncModes() {
   byId('schedule-editor').hidden = !scheduleMode.checked;
   const noneSelected = !ruleMode.checked && !scheduleMode.checked;
   byId('generate-json').disabled = noneSelected;
-  if (noneSelected) show('form-status', '규칙 또는 일정을 선택하세요.');
+  if (mixed.active()) byId('generate-json').disabled = false;
+  else if (noneSelected) show('form-status', '규칙 또는 일정을 선택하세요.');
+  mixed.sync();
 }
 
 function syncScheduleType() {
@@ -162,7 +172,7 @@ function addInterval() {
   const update = () => {
     byId('add-interval').disabled = list.children.length >= MAX_INTERVALS;
     for (const [index, item] of [...list.children].entries()) {
-      item.querySelector('legend').textContent = '시간 구간 ' + (index + 1);
+      localize(item.querySelector('legend'), () => t('시간 구간 {number}', { number: index + 1 }));
       item.querySelector('[data-remove]').disabled = list.children.length === 1;
     }
   };
@@ -172,6 +182,7 @@ function addInterval() {
     invalidate();
     byId('add-interval').focus();
   });
+  translateTree(row);
   list.append(row);
   update();
   return row.querySelector('[data-start]');
@@ -230,6 +241,8 @@ function readJsonString(value, path) {
   return decoded;
 }
 
+const mixed = bindMixed({ readRule, readSchedule, renderJson, show, showError, invalidate });
+
 byId('add-condition').addEventListener('click', () => {
   if (conditions.children.length >= MAX_CONDITIONS) return;
   addCondition().focus();
@@ -244,7 +257,7 @@ ruleForm.addEventListener('input', event => {
 ruleForm.addEventListener('submit', event => {
   event.preventDefault();
   try {
-    renderJson(serializeSelection({
+    renderJson(mixed.active() ? mixed.serialize() : serializeSelection({
       rule: ruleMode.checked ? readRule() : null,
       schedule: scheduleMode.checked ? readSchedule() : null,
     }));
@@ -261,6 +274,7 @@ byId('load').addEventListener('click', () => {
     const rule = parseExchange(byId('json-input').value);
     const text = serializeRule(rule);
     applyRule(rule);
+    byId('use-mixed').checked = false;
     ruleMode.checked = true;
     scheduleMode.checked = false;
     syncModes();
@@ -293,9 +307,12 @@ trialForm.addEventListener('submit', event => {
       show('trial-status', '시험 패키지가 규칙의 대상과 다릅니다.');
       return;
     }
-    const labels = result.results.map((matched, index) => '조건 ' + (index + 1) + ' ' + (matched ? '일치' : '미일치'));
-    const outcome = result.status === 'matched' ? '일치 · ' + ACTIONS[result.action] : '미일치';
-    show('trial-status', outcome + ' (' + labels.join(', ') + ')', result.status === 'matched' ? 'ok' : '');
+    show('trial-status', () => {
+      const labels = result.results.map((matched, index) =>
+        t('조건 {number}', { number: index + 1 }) + ' ' + t(matched ? '일치' : '미일치'));
+      const outcome = result.status === 'matched' ? t('일치 ·') + ' ' + t(ACTIONS[result.action]) : t('미일치');
+      return outcome + ' (' + labels.join(', ') + ')';
+    }, result.status === 'matched' ? 'ok' : '');
   } catch (error) {
     if (!(error instanceof ExchangeError)) throw error;
     showError('trial-status', error);
@@ -317,7 +334,9 @@ WEEKDAYS.forEach((day, index) => {
   const input = document.createElement('input');
   input.type = 'checkbox';
   input.value = day;
-  label.append(input, labels[index]);
+  const text = document.createElement('span');
+  localize(text, () => t(labels[index]));
+  label.append(input, text);
   byId('weekdays').append(label);
 });
 for (const zone of new Set(['UTC', 'Asia/Seoul', ...(Intl.supportedValuesOf?.('timeZone') ?? [])])) {

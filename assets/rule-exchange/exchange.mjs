@@ -37,6 +37,7 @@ function inspectTokens(text, maxDepth) {
   const containers = [];
   let versionToken;
   let integerTokensOnly = true;
+  let unsignedIntegerTokensOnly = true;
   for (let i = 0; i < tokens.length; i++) {
     const token = tokens[i];
     if (token === '{' || token === '[') {
@@ -52,11 +53,12 @@ function inspectTokens(text, maxDepth) {
       if (keys.has(value)) fail('DUPLICATE_KEY', '$', '같은 JSON 객체에 중복된 필드가 있습니다.');
       keys.add(value);
       if (containers.length === 1 && value === 'formatVersion') versionToken = tokens[i + 2];
-    } else if (/^-?[0-9]/u.test(token) && !/^-?[0-9]+$/u.test(token)) {
-      integerTokensOnly = false;
+    } else if (/^-?[0-9]/u.test(token)) {
+      if (!/^-?[0-9]+$/u.test(token)) integerTokensOnly = false;
+      if (!/^[0-9]+$/u.test(token)) unsignedIntegerTokensOnly = false;
     }
   }
-  return { versionToken, integerTokensOnly };
+  return { versionToken, integerTokensOnly, unsignedIntegerTokensOnly };
 }
 
 export function parseExchange(text) {

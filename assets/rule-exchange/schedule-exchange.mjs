@@ -169,17 +169,18 @@ function checkRecurrence(input) {
   return result;
 }
 
-function checkSchedule(schedule) {
+export function checkSchedule(schedule, mixed = false) {
   const mode = schedule?.mode;
   if (mode !== 'EXPLICIT' && mode !== 'RECURRING') value('schedule.mode', '지원하는 일정 유형을 선택하세요.');
   const detail = mode === 'EXPLICIT' ? 'intervals' : 'recurrence';
   keys(schedule, 'schedule', ['ref', 'name', 'zoneId', 'mode', detail], ['enabled']);
-  if (schedule.ref !== REF) value('schedule.ref', '문서 안에서만 사용하는 일정 참조가 필요합니다.');
+  if (mixed ? typeof schedule.ref !== 'string' || !/^s(?:[1-9]|1[0-6])$/u.test(schedule.ref) : schedule.ref !== REF) value('schedule.ref', '문서 안에서만 사용하는 일정 참조가 필요합니다.');
   checkedText(schedule.name, 'schedule.name', 80, true);
   if (!knownZones.has(schedule.zoneId)) value('schedule.zoneId', '이 브라우저가 지원하는 시간대 ID를 입력하세요.');
   const enabled = Object.hasOwn(schedule, 'enabled') ? boolean(schedule.enabled, 'schedule.enabled') : false;
+  if (mixed && enabled) value('schedule.enabled', '가져올 일정은 꺼진 상태로 작성하세요.');
   return {
-    ref: REF, name: schedule.name, zoneId: schedule.zoneId, enabled, mode,
+    ref: schedule.ref, name: schedule.name, zoneId: schedule.zoneId, enabled, mode,
     [detail]: mode === 'EXPLICIT' ? checkIntervals(schedule.intervals, schedule.zoneId) : checkRecurrence(schedule.recurrence),
   };
 }
