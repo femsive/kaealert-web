@@ -32,15 +32,16 @@ function checkByteLength(text) {
 
 // JSON.parse establishes syntax. The token pass retains duplicate keys and the raw version token
 // before their spelling is lost in the decoded object.
-function inspectTokens(text) {
+function inspectTokens(text, maxDepth) {
   const tokens = Array.from(text.matchAll(/"(?:[^"\\]|\\.)*"|-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?(?:[eE][+-]?[0-9]+)?|true|false|null|[{}\[\],:]/gsu), match => match[0]);
   const containers = [];
   let versionToken;
+  let integerTokensOnly = true;
   for (let i = 0; i < tokens.length; i++) {
     const token = tokens[i];
     if (token === '{' || token === '[') {
       containers.push(token === '{' ? new Set() : null);
-      if (containers.length > 4) fail('DEPTH', '$', 'JSON은 컨테이너 깊이 4까지만 지원합니다.');
+      if (containers.length > maxDepth) fail('DEPTH', '$', 'JSON 컨테이너 깊이 한도를 초과했습니다.');
     } else if (token === '}' || token === ']') {
       containers.pop();
     } else if (token.startsWith('"')) {
@@ -51,13 +52,22 @@ function inspectTokens(text) {
       if (keys.has(value)) fail('DUPLICATE_KEY', '$', '같은 JSON 객체에 중복된 필드가 있습니다.');
       keys.add(value);
       if (containers.length === 1 && value === 'formatVersion') versionToken = tokens[i + 2];
+    } else if (/^-?[0-9]/u.test(token) && !/^-?[0-9]+$/u.test(token)) {
+      integerTokensOnly = false;
     }
   }
-  return versionToken;
+  return { versionToken, integerTokensOnly };
 }
 
 export function parseExchange(text) {
   checkByteLength(text);
+  const { document, versionToken } = decodeExchange(text, 4);
+  const rule = validateExchange(document);
+  if (versionToken !== '1') fail('VERSION', 'formatVersion', '버전은 숫자 1로 표기하세요.');
+  return rule;
+}
+
+export function decodeExchange(text, maxDepth) {
   if (text.startsWith('\ufeff')) fail('JSON_SYNTAX', '$', 'JSON 앞의 BOM을 제거하세요.');
   let document;
   try {
@@ -65,18 +75,15 @@ export function parseExchange(text) {
   } catch {
     fail('JSON_SYNTAX', '$', 'JSON 객체 한 개를 입력하세요. 코드 표시, 설명, 주석, 끝 쉼표는 허용하지 않습니다.');
   }
-  const versionToken = inspectTokens(text);
-  const rule = validateExchange(document);
-  if (versionToken !== '1') fail('VERSION', 'formatVersion', '버전은 숫자 1로 표기하세요.');
-  return rule;
+  return { document, ...inspectTokens(text, maxDepth) };
 }
 
-function objectKeys(value, path, required, optional = []) {
+export function objectKeys(value, path, required, optional = [], version = 'v1') {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
     fail('TYPE', path, 'JSON 객체여야 합니다.');
   }
   if (Object.keys(value).some(key => !required.includes(key) && !optional.includes(key))) {
-    fail('UNKNOWN_FIELD', path, 'v1에서 지원하지 않는 필드가 있습니다.');
+    fail('UNKNOWN_FIELD', path, version + '에서 지원하지 않는 필드가 있습니다.');
   }
   for (const key of required) {
     if (!Object.hasOwn(value, key)) fail('MISSING', path === '$' ? key : path + '.' + key, '필수 필드입니다.');
@@ -88,7 +95,7 @@ function enumValue(value, options, path) {
   if (!Object.hasOwn(options, value)) fail('UNSUPPORTED_VALUE', path, 'v1에서 지원하지 않는 값입니다.');
 }
 
-function checkedText(value, path, max, singleLine = false) {
+export function checkedText(value, path, max, singleLine = false) {
   if (typeof value !== 'string') fail('TYPE', path, '문자열이어야 합니다.');
   if (invalidCharacters.test(value) || (singleLine && /[\t\r\n]/u.test(value))) {
     fail('CHARACTERS', path, '지원하지 않는 제어 문자 또는 잘못된 Unicode가 있습니다.');
@@ -107,7 +114,10 @@ function validateExchange(document) {
   if (typeof document.formatVersion !== 'number') fail('TYPE', 'formatVersion', '숫자여야 합니다.');
   if (document.formatVersion !== 1) fail('VERSION', 'formatVersion', '이 도구는 v1만 지원합니다.');
 
-  const { rule } = document;
+  return validateRule(document.rule);
+}
+
+export function validateRule(rule) {
   objectKeys(rule, 'rule', ['name', 'sourcePackage', 'action', 'conditions'], ['enabled', 'match']);
   checkedText(rule.name, 'rule.name', 80, true);
   if (rule.sourcePackage !== null) {

@@ -45,6 +45,8 @@ textarea.code { font-family: Consolas, ui-monospace, monospace; font-size: 13px;
 textarea[readonly] { background: #f8f7fc; }
 .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .fields select, fieldset textarea { margin-top: 4px; }
+.option-list { display: flex; flex-wrap: wrap; gap: 0 14px; }
+.option-list .check { margin-block: 4px; }
 .check { display: flex; align-items: center; gap: 8px; min-height: 28px; font-weight: 500; }
 .check.small { margin-block: 3px; color: var(--muted); }
 input[type=checkbox] { inline-size: 17px; block-size: 17px; accent-color: var(--accent); }

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; form-action 'none'; base-uri 'none'; connect-src 'none'">
-  <title>깨알 AI 규칙 생성 지침</title>
+  <title>깨알 AI 규칙·일정 생성 지침</title>
   <link rel="stylesheet" href="../assets/rule-exchange/style.css">
   <script type="module" src="../assets/rule-exchange/ai-guide.mjs"></script>
 </head>
@@ -23,22 +23,28 @@
   </header>
   <main class="shell guide">
     <div class="intro">
-      <h1>AI 규칙 생성 지침</h1>
-      <p>아래 지침을 원하는 AI에 붙여넣고 조건을 설명하세요. 받은 JSON은 <a href="../rules/">규칙 만들기</a>에서 검사할 수 있습니다.</p>
+      <h1>AI 규칙·일정 생성 지침</h1>
+      <p>복사한 지침을 외부 AI에 붙여넣고 합성 예시로 필요한 조건을 설명하세요. 실제 알림 본문, 업무상 민감 정보, 계정 정보, 내부 주소는 입력하지 마세요.</p>
+      <p>받은 JSON은 지원하는 깨알 앱의 <strong>규칙 → JSON 가져오기 → 내용 확인</strong>에서 검토한 뒤 저장하세요. 웹의 기존 JSON 불러오기는 v1 규칙용입니다. <a href="../help/#import">가져오기 도움말</a></p>
     </div>
     <div class="guide-stack">
       <section class="card" aria-labelledby="guide-heading">
         <div class="heading-line">
-          <h2 id="guide-heading">복사용 지침 · v1</h2>
+          <h2 id="guide-heading">복사용 지침 · v1과 v2</h2>
           <button id="copy-guide" type="button" class="secondary">지침 전체 복사</button>
         </div>
-        <textarea id="ai-instructions" class="code guide-source" rows="14" readonly spellcheck="false" aria-labelledby="guide-heading">깨알(KAEALert) 규칙 생성 지침 · 규격 v1
+        <textarea id="ai-instructions" class="code guide-source" rows="14" readonly spellcheck="false" aria-labelledby="guide-heading">깨알(KAEALert) 규칙·일정 생성 지침 · JSON v1과 v2
 
 역할
-자연어로 받은 요청을 깨알 규칙 교환 JSON으로 바꾼다. 명확하고 표현 가능한 요청에만 JSON을 출력한다. JSON 객체 한 개에 사용자 규칙 한 개를 담는다. 앞뒤 설명, Markdown 코드 펜스, 주석, 중복 키, 끝 쉼표를 넣지 않는다.
+자연어로 받은 요청을 깨알 교환 JSON으로 바꾼다. 명확하고 표현 가능한 요청에만 JSON 객체 한 개를 출력한다. 앞뒤 설명, Markdown 코드 펜스, 주석, 중복 키, 끝 쉼표를 넣지 않는다. 표에 없는 필드, 타입 변환, 배열로 묶은 여러 규칙이나 여러 일정은 지원하지 않는다.
 
-필드
-- 최상위에는 format, formatVersion, rule만 둔다. format은 문자열 "kaealert-rule-exchange", formatVersion은 숫자 토큰 1, rule은 객체다.
+버전과 최상위 구조
+- format은 두 버전 모두 문자열 "kaealert-rule-exchange"다. formatVersion은 따옴표 없이 정수 1 또는 2로 쓴다.
+- 규칙만 만들 경우 v1을 사용한다. 최상위 필드는 format, formatVersion, rule이다.
+- 일정만 또는 규칙과 일정을 함께 만들 경우 v2를 사용한다. 최상위 필드는 format, formatVersion, 필수 schedule, 선택 rule이다. schedule.ref와 함께 만드는 rule.scheduleRef에는 같은 문자열 "s1"을 쓴다. 기존 앱의 ID나 일정 이름을 참조 값으로 사용하지 않는다. v1에는 scheduleRef를 쓰지 않는다.
+- UTF-8 크기는 v1 8 KiB, v2 64 KiB 이하다. 최상위 객체를 깊이 1로 세면 컨테이너 깊이는 v1 최대 4, v2 최대 5다. 정수 필드에는 소수나 지수 표기를 쓰지 않는다. BOM, 잘못 짝지어진 서로게이트, C0/C1 제어 문자는 넣지 않는다. 조건 값의 TAB·LF·CR은 JSON 이스케이프로 표현할 수 있다.
+
+규칙 필드
 - rule.name은 필수 문자열이다. 비어 있거나 공백만일 수 없으며 최대 80 UTF-16 코드 단위다. 탭과 줄바꿈을 넣지 않는다.
 - rule.sourcePackage는 필수다. 모든 감시 앱이면 null, 앱별이면 확인한 정확한 패키지 문자열을 넣는다. 255 UTF-16 코드 단위 이하이고 점으로 나눈 부분이 두 개 이상이어야 한다. 각 부분은 ASCII 영문으로 시작하며 뒤에는 ASCII 영문·숫자·밑줄만 사용한다.
 - rule.action은 필수이며 "ALERT"는 일치 시 알람, "SUPPRESS"는 일치 시 무시다. 미일치는 이 규칙에서 별도 동작을 결정하지 않는다.
@@ -48,7 +54,16 @@
 - field는 "TITLE", "BODY", "TITLE_OR_BODY"다. 마지막 값은 제목과 본문을 각각 비교해 하나라도 일치하면 참이다. 두 값을 이어 붙이지 않는다. 입력 필드가 누락(null)이면 그 값의 비교는 거짓이다. 빈 문자열은 누락과 구분한다.
 - op는 "EQUALS", "CONTAINS", "NOT_CONTAINS", "REGEX"만 지원한다. "TITLE_OR_BODY"와 "NOT_CONTAINS"를 함께 쓰지 않는다.
 - value는 공백만이 아닌 문자열이다. 리터럴은 최대 256 UTF-16 코드 단위, 정규식은 최대 128이다. 한글·이모지·기호는 그대로 찾는 "CONTAINS"나 "EQUALS"를 우선한다. 대소문자를 구분하며 공백·한글 조합·이모지·줄바꿈을 바꾸지 않는다.
-- 전체는 UTF-8 8 KiB 이하, 컨테이너 깊이는 최상위 객체를 1로 세어 최대 4다. BOM, 잘못 짝지어진 서로게이트, C0/C1 제어 문자는 넣지 않는다. 조건 값의 TAB·LF·CR은 JSON 이스케이프로 표현할 수 있다. 표에 없는 필드와 타입 변환은 금지한다.
+
+일정 필드
+- schedule의 필수 필드는 ref, name, zoneId, mode와 모드에 맞는 상세 필드 하나다. ref는 "s1"이다. name은 공백만이 아닌 최대 80 UTF-16 코드 단위의 한 줄 문자열이다. zoneId는 UTC 또는 기기에서 지원하는 IANA 시간대 ID다. 예시는 "Asia/Seoul"이다. enabled는 선택 boolean이며 생략 시 false다. 사용자가 켜서 추가하라고 명시한 경우에만 true를 사용한다.
+- 기본 날짜·시간 구간은 mode "EXPLICIT"와 intervals를 사용한다. intervals에는 start, end만 있는 구간 객체 1~128개를 담는다. 각각 시간대 오프셋 없이 YYYY-MM-DDTHH:mm 형식으로 쓴다. 종료는 시작보다 늦어야 하며 한 일정 안의 구간은 겹칠 수 없다. 시작은 포함하고 종료는 제외한다. 시간대에서 존재하지 않거나 두 번 나타나는 시각은 명시 구간에 쓰지 않는다.
+- 나머지 다섯 유형은 mode "RECURRING"과 recurrence를 사용한다. recurrence의 공통 필드는 type, startDate, endDate, startTime, endTime, crossesMidnight다. 날짜는 YYYY-MM-DD(0001~9999년), 시각은 HH:mm(00:00~23:59) 형식이다. endDate는 시작일 이후 또는 같은 날짜로 쓰고 종료 날짜가 없으면 null이다. 다음 날 종료면 crossesMidnight를 true로 쓰고 endTime을 startTime 이하로 지정한다. 같은 날 종료면 false로 쓰고 endTime은 startTime보다 늦어야 한다.
+- "DAILY"(매일)는 공통 필드만 쓴다.
+- "WEEKLY_SELECTED_DAYS"(매주 선택 요일)는 weekdays 배열에 MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY 중 하나 이상을 중복 없이 넣는다.
+- "EVERY_N_DAYS"(N일마다)는 intervalDays에 1~365 정수를 쓰며 startDate를 기준일로 삼는다.
+- "MONTHLY_DAYS"(매월 지정 일자)는 selectedDays 배열에 1~31 정수를 중복 없이 넣는다. 해당 일자가 없는 달에는 그 일자를 건너뛴다.
+- "SPECIFIC_DATES"(특정 날짜 선택)는 selectedDates 배열에 서로 다른 날짜 1~1,000개를 넣는다. startDate는 가장 이른 선택 날짜로 지정하고 endDate는 null로 쓴다.
 
 정규식
 - 대소문자를 구분하는 부분 일치다. 일반 ASCII 문자(U+0020~U+007E)와 한글 완성형 음절(U+AC00~U+D7A3), \n \r \t 이스케이프를 쓸 수 있다. 이모지 등 이 범위 밖의 글자는 리터럴 연산으로 찾아라. 예약 문자 \ . ^ $ | ? * + ( ) [ ] { } 자체를 찾을 때는 앞에 역슬래시를 붙인다. 슬래시 /는 일반 문자이며 패턴을 /로 감싸지 않는다. JSON 안에서 역슬래시는 한 번 더 이스케이프한다. 예: "READY\\nOK".
@@ -57,9 +72,11 @@
 
 응답 전에 확인
 - 대상이 앱별인지 공통인지, 정확한 앱 패키지, 비교할 제목이나 본문, 키워드나 패턴, 알람 또는 무시 동작이 모호하면 먼저 질문한다. 앱 이름만으로 패키지를 추측하지 않는다.
-- 여러 규칙, 일정, 기존 규칙 수정·삭제, 구조화 필드, 이미지 속 글자 인식, 감시나 휴대폰 설정의 변경 등 표현할 수 없는 요청이면 이유를 설명하고 지원하는 조건으로 바꿀지 묻는다. 임의 필드를 추가하거나 요구를 조용히 생략하지 않는다. 이 경우 규칙 JSON을 생성하지 않는다.
-- 실제 메시지나 계정 정보를 요청하지 않는다. 합성 제목과 본문으로 사례를 확인한다.
-- 교환 버전 1은 앱 버전과 독립이다. Play Alpha 0.1.1 (4)에서 이 JSON을 가져올 수 있다고 안내하지 않는다. Backup v7 파일과 교환할 수 없다. 웹 생성기에서 JSON을 검사하고, 향후 지원 앱에서 저장하기 전에는 앱 자체 검증과 미리보기, 사용자의 명시적 확인이 필요하다. 웹의 문자열 일치 결과만으로 Android 알람을 보장하지 않는다.</textarea>
+- 일정의 시간대, 날짜 범위, 시각 또는 다음 날 종료 여부가 모호하면 먼저 확인한다.
+- 여러 규칙이나 여러 일정, 기존 항목 변경·삭제, 구조화 필드, 이미지 속 글자 인식, 감시나 휴대폰 설정의 변경은 이 형식에서 지원하지 않는다. 이유를 설명하고 지원하는 조건으로 바꿀지 묻는다. 요청 일부를 생략한 JSON은 만들지 않는다.
+- 실제 메시지, 민감한 업무 데이터, 계정과 내부 주소는 요청하지 않는다. 합성 제목과 본문으로 사례를 확인한다.
+- Google Play 비공개 테스트 Alpha 0.1.2 (5)는 v1, Alpha 0.1.3 (6)은 v1과 v2를 지원한다. 구버전 앱에서는 해당 형식을 지원하는 버전 확인이 필요하다.
+- 이 JSON은 신규 추가용이다. Backup v7은 앱의 백업 복원에서 사용한다. 무료 한도는 사용자 규칙 5개와 일정 3개이고, 새 반복 및 특정 날짜 선택 일정에는 Pro가 필요하다. 앱 자체 검사, 미리보기, 사용자의 저장 확인이 필요하다. 항목을 켜서 추가할 경우 미리보기에서 해당 항목을 각각 확인한다.</textarea>
         <div id="guide-copy-status" class="status" role="status"></div>
       </section>
       <section class="card" aria-labelledby="examples">
@@ -172,19 +189,71 @@
   }
 }</code></pre>
           </details>
+          <details>
+            <summary>일정만 · 기본 날짜·시간 구간</summary>
+            <p><strong>요청</strong> 서울 시간으로 2028년 2월 29일 23시부터 다음 날 1시까지 쓸 일정을 만들어 줘.</p>
+            <pre><code data-valid-example="v2-explicit">{
+  "format": "kaealert-rule-exchange",
+  "formatVersion": 2,
+  "schedule": {
+    "ref": "s1",
+    "name": "합성 야간 일정",
+    "zoneId": "Asia/Seoul",
+    "enabled": false,
+    "mode": "EXPLICIT",
+    "intervals": [
+      {"start": "2028-02-29T23:00", "end": "2028-03-01T01:00"}
+    ]
+  }
+}</code></pre>
+          </details>
+          <details>
+            <summary>규칙과 일정 · 특정 날짜 선택</summary>
+            <p><strong>요청</strong> 서울 시간으로 2028년 2월 29일과 11월 30일의 23시부터 다음 날 1시 사이, 모든 감시 앱의 본문에 ‘합성 장애’가 들어오면 울리는 규칙과 일정을 만들어 줘.</p>
+            <pre><code data-valid-example="v2-bundle">{
+  "format": "kaealert-rule-exchange",
+  "formatVersion": 2,
+  "schedule": {
+    "ref": "s1",
+    "name": "합성 날짜 일정",
+    "zoneId": "Asia/Seoul",
+    "enabled": false,
+    "mode": "RECURRING",
+    "recurrence": {
+      "type": "SPECIFIC_DATES",
+      "startDate": "2028-02-29",
+      "endDate": null,
+      "startTime": "23:00",
+      "endTime": "01:00",
+      "crossesMidnight": true,
+      "selectedDates": ["2028-02-29", "2028-11-30"]
+    }
+  },
+  "rule": {
+    "name": "합성 장애 경보",
+    "sourcePackage": null,
+    "action": "ALERT",
+    "enabled": false,
+    "conditions": [
+      {"field": "BODY", "op": "CONTAINS", "value": "합성 장애"}
+    ],
+    "scheduleRef": "s1"
+  }
+}</code></pre>
+          </details>
         </div>
       </section>
       <section class="card" aria-labelledby="unsupported">
         <h2 id="unsupported">질문하거나 거부하는 예제</h2>
         <dl class="guide-cases">
           <dt data-guide-case="lookaround">“앞에 WARN이 있을 때만 숫자를 찾는 lookbehind를 꼭 써 줘.”</dt>
-          <dd>v1에서 lookbehind를 지원하지 않습니다. WARN과 숫자를 함께 검사하는 조건을 허용할지 물어봅니다.</dd>
+          <dd>교환 JSON의 정규식은 lookbehind를 지원하지 않습니다. WARN과 숫자를 함께 검사하는 조건을 허용할지 물어봅니다.</dd>
           <dt data-guide-case="target">“메신저 알림에 장애가 뜨면 울려 줘.”</dt>
           <dd>어떤 앱인지, 정확한 패키지나 공통 범위를 확인합니다. ‘장애’를 제목과 본문 중 어디에서 찾을지도 묻습니다.</dd>
           <dt data-guide-case="schedule">“매주 월요일에만 울리는 일정을 JSON에도 넣어 줘.”</dt>
-          <dd>v1에는 일정 필드가 없습니다. 앱에서 일정을 별도로 설정할 수 있도록 안내합니다.</dd>
+          <dd>v2에서 매주 선택 요일 일정을 연결할 수 있습니다. 월요일 시작·종료 시각과 적용 기간, 시간대를 확인합니다.</dd>
           <dt data-guide-case="batch">“이 두 규칙을 JSON 한 개로 묶어 줘.”</dt>
-          <dd>v1 JSON 한 개에는 규칙 하나만 담을 수 있습니다. 어떤 규칙을 먼저 작성할지 묻습니다.</dd>
+          <dd>어느 버전이든 JSON 한 개에는 규칙 하나만 담을 수 있습니다. 어떤 규칙을 먼저 작성할지 묻습니다.</dd>
           <dt data-guide-case="ocr">“사진 안의 글자를 읽고 키워드를 찾아 줘.”</dt>
           <dd>알림 이미지의 글자 인식은 이 규격으로 표현할 수 없습니다. Android가 제공하는 제목이나 본문을 기준으로 작성할지 묻습니다.</dd>
         </dl>
