@@ -80,7 +80,7 @@
                 <p class="hint">일정이 필요합니다. 아래 일정 만들기를 함께 선택하면 새 일정에 연결합니다.</p>
                 <fieldset id="mixed-event" data-key>
                   <legend>고유 사건 키</legend>
-                  <label>읽을 필드 <select><option value="BODY">본문</option><option value="TITLE">제목</option><option value="IP">파싱한 IP</option><option value="ORIGINAL_EVENT_ID">파싱한 원본 사건 ID</option></select></label>
+                  <label>읽을 필드 <select><option value="BODY">본문</option><option value="TITLE">제목</option></select></label>
                   <div data-labeled>
                     <label>접두사 <input maxlength="32" placeholder="예: item="></label>
                     <label>값에 쓰는 문자 <select><option value="ASCII_TOKEN">영문·숫자·밑줄·점·하이픈 (최대 128자)</option><option value="ASCII_ALNUM">영문·숫자 (최대 16자)</option></select></label>
@@ -88,7 +88,7 @@
                 </fieldset>
                 <fieldset id="mixed-group" data-key>
                   <legend>그룹 키 (선택)</legend>
-                  <label>읽을 필드 <select><option value="">사용 안 함</option><option value="BODY">본문</option><option value="TITLE">제목</option><option value="IP">파싱한 IP</option><option value="ORIGINAL_EVENT_ID">파싱한 원본 사건 ID</option></select></label>
+                  <label>읽을 필드 <select><option value="">사용 안 함</option><option value="BODY">본문</option><option value="TITLE">제목</option></select></label>
                   <div data-labeled>
                     <label>접두사 <input maxlength="32" placeholder="예: item="></label>
                     <label>값에 쓰는 문자 <select><option value="ASCII_TOKEN">영문·숫자·밑줄·점·하이픈 (최대 128자)</option><option value="ASCII_ALNUM">영문·숫자 (최대 16자)</option></select></label>
@@ -99,7 +99,7 @@
                 <label>대기 시간 (초, 0~86400) <input id="mixed-seconds" inputmode="numeric" value="300"></label>
                 <fieldset id="mixed-target" data-key>
                   <legend>대상 키</legend>
-                  <label>읽을 필드 <select><option value="BODY">본문</option><option value="TITLE">제목</option><option value="IP">파싱한 IP</option><option value="ORIGINAL_EVENT_ID">파싱한 원본 사건 ID</option></select></label>
+                  <label>읽을 필드 <select><option value="BODY">본문</option><option value="TITLE">제목</option></select></label>
                   <div data-labeled>
                     <label>접두사 <input maxlength="32" placeholder="예: item="></label>
                     <label>값에 쓰는 문자 <select><option value="ASCII_TOKEN">영문·숫자·밑줄·점·하이픈 (최대 128자)</option><option value="ASCII_ALNUM">영문·숫자 (최대 16자)</option></select></label>
@@ -173,8 +173,29 @@
           </div>
         </section>
         <section id="mixed-controls" class="section-divider" hidden>
-          <p class="hint">고급 묶음은 JSON v3 지원 앱이 필요합니다. 대한민국 Google Play 비공개 테스트 Alpha 0.1.5 (8)에서 v3 가져오기를 확인했습니다. Alpha 7 등 이전 버전에서는 앱이 지원하는 v1·v2를 사용하세요. 묶음 항목은 꺼진 상태로 추가됩니다.</p>
+          <p class="hint">고급 묶음은 기본으로 JSON v4를 생성합니다. v4를 끄면 호환용 범용 v3 묶음을 만들 수 있습니다. 이전 앱에서는 설치한 버전이 지원하는 형식을 사용하세요.</p>
           <button id="mixed-add" type="button" class="secondary">입력한 항목을 묶음에 추가</button>
+          <details id="advanced-v4">
+            <summary>고급 행 추출</summary>
+            <label><input type="checkbox" id="use-v4" checked> JSON v4 사용 (권장)</label>
+            <p>JSON v4는 Google Play 비공개 테스트 Alpha 0.1.6 (9)에서 가져올 수 있습니다. 새 규칙과 일정은 OFF로 저장됩니다. 필요한 규칙, 일정 및 감시 앱을 확인한 뒤 앱에서 켜세요.</p>
+            <label for="v4-ref">필드 이름</label><input id="v4-ref" value="device">
+            <label for="v4-input">입력</label><select id="v4-input"><option>BODY</option><option>TITLE</option></select>
+            <label for="v4-label">행 이름</label><input id="v4-label" value="Device">
+            <label for="v4-separator">행 구분자</label><input id="v4-separator" value="=">
+            <label for="v4-piece">열 구분자 (선택)</label><input id="v4-piece" value="|">
+            <label for="v4-index">열 위치 (0부터)</label><input id="v4-index" value="1" type="number" min="0" max="127">
+            <button type="button" class="secondary" id="v4-add-field">필드 목록에 추가</button>
+            <label for="v4-fields">추출할 필드 목록</label>
+            <textarea id="v4-fields" rows="4" spellcheck="false">[{"ref":"device","input":"BODY","label":"Device","separator":"=","columnSeparator":"|","index":1}]</textarea>
+            <label for="v4-conditions">이 항목의 조건 목록 (비우면 위 조건 사용)</label>
+            <p>TEXT_PATTERN은 한 필드 안에서 ASCII 대소문자를 구분하지 않습니다. |는 대안, &amp;는 같은 필드의 필수 조건, ~는 공백 0개 이상, *와 **는 한 줄과 여러 줄, #·#+·#3은 각각 숫자 1개·1개 이상·1~3개입니다. 특수문자는 역슬래시로 이스케이프합니다. NOT_TEXT_PATTERN은 값이 있을 때만 불일치를 검사합니다.</p>
+            <textarea id="v4-conditions" rows="2" spellcheck="false" placeholder='[{"fieldRef":"device","op":"EQUALS","value":"Q-7"}]'></textarea>
+            <label for="v4-phase">일반 규칙 평가 시점</label>
+            <select id="v4-phase"><option value="ORDINARY">상태 처리 후</option><option value="PRE_STATE">상태 처리 전</option></select>
+            <label for="v4-key">고유 사건 또는 대상 필드 이름</label><input id="v4-key" value="device">
+            <label for="v4-group">집계 그룹 필드 이름 (선택)</label><input id="v4-group">
+          </details>
           <ul id="mixed-list" aria-label="묶음에 추가한 항목"></ul>
         </section>
         <div class="actions">

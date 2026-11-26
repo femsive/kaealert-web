@@ -1,3 +1,4 @@
+import { compileTextPattern } from './text-pattern.mjs';
 export const FORMAT = 'kaealert-rule-exchange';
 export const MAX_BYTES = 8 * 1024;
 export const MAX_CONDITIONS = 8;
@@ -119,7 +120,7 @@ function validateExchange(document) {
   return validateRule(document.rule);
 }
 
-export function validateRule(rule) {
+export function validateRule(rule, fields = null) {
   objectKeys(rule, 'rule', ['name', 'sourcePackage', 'action', 'conditions'], ['enabled', 'match']);
   checkedText(rule.name, 'rule.name', 80, true);
   if (rule.sourcePackage !== null) {
@@ -139,15 +140,24 @@ export function validateRule(rule) {
   const seen = new Set();
   const conditions = rule.conditions.map((condition, index) => {
     const path = 'rule.conditions[' + index + ']';
-    objectKeys(condition, path, ['field', 'op', 'value']);
-    const { field, op, value } = condition;
+    const ref = fields !== null && Object.hasOwn(condition ?? {}, 'fieldRef');
+    const { op, value } = condition ?? {};
+    const free = fields !== null && ['EXISTS', 'NOT_EXISTS'].includes(op);
+    objectKeys(condition, path, [ref ? 'fieldRef' : 'field', 'op', ...(free ? [] : ['value'])]);
+    const row = ref ? fields.get(condition.fieldRef) : null;
+    const field = ref ? row?.input : condition.field;
     enumValue(field, FIELDS, path + '.field');
-    enumValue(op, OPERATORS, path + '.op');
-    if (field === 'TITLE_OR_BODY' && op === 'NOT_CONTAINS') {
+    if (!fields || !['NOT_EQUALS', 'EXISTS', 'NOT_EXISTS', 'TEXT_PATTERN', 'NOT_TEXT_PATTERN'].includes(op)) enumValue(op, OPERATORS, path + '.op');
+    if (field === 'TITLE_OR_BODY' && ['NOT_CONTAINS', 'NOT_EQUALS', 'NOT_TEXT_PATTERN'].includes(op)) {
       fail('UNSUPPORTED_VALUE', path + '.op', '제목 또는 본문에는 포함하지 않음 조건을 쓸 수 없습니다.');
     }
-    checkedText(value, path + '.value', op === 'REGEX' ? 128 : 256);
-    const signature = JSON.stringify([field, op, value]);
+    const template = op === 'TEXT_PATTERN' || op === 'NOT_TEXT_PATTERN';
+    if (!free) checkedText(value, path + '.value', template ? 1536 : op === 'REGEX' ? 128 : 256);
+    if (template) {
+      try { compileTextPattern(value); }
+      catch { fail('VALUE', path + '.value', 'TEXT_PATTERN'); }
+    }
+    const signature = JSON.stringify([row?.signature ?? field, op, value]);
     if (seen.has(signature)) fail('DUPLICATE_CONDITION', path, '동일한 조건이 이미 있습니다.');
     seen.add(signature);
     if (op === 'REGEX') compilePattern(value, path + '.value');

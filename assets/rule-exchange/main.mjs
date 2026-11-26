@@ -133,6 +133,10 @@ function renderJson(text) {
   copy.disabled = false;
   show('copy-status');
   const result = JSON.parse(text);
+  if (result.formatVersion === 4) {
+    show('compatibility-status', 'JSON v4는 Google Play 비공개 테스트 Alpha 0.1.6 (9)에서 가져올 수 있습니다. 새 규칙과 일정은 OFF로 저장됩니다. 필요한 규칙, 일정 및 감시 앱을 확인한 뒤 앱에서 켜세요.');
+    return;
+  }
   if (result.formatVersion === 3) {
     show('compatibility-status', 'JSON v3 지원 앱이 필요합니다. 대한민국 Google Play 비공개 테스트 Alpha 0.1.5 (8)에서 가져오기를 확인했습니다. Alpha 7 등 이전 버전에서는 앱이 지원하는 v1·v2를 사용하세요. Free는 규칙 합산 5개·일정 3개이며 반복 일정 추가에는 Pro가 필요합니다.');
     return;

@@ -1,4 +1,24 @@
 export const pageStrings = {
+  "필드 이름": ["Field reference","フィールド名"],
+  "입력": ["Input","入力"],
+  "행 이름": ["Row name","行名"],
+  "행 구분자": ["Row separator","行区切り"],
+  "열 구분자 (선택)": ["Column separator (optional)","列区切り（任意）"],
+  "열 위치 (0부터)": ["Column index (starting at zero)","列番号（0から）"],
+  "필드 목록에 추가": ["Add to field list","フィールド一覧に追加"],
+  "고급 행 추출": ["Advanced row extraction", "高度な行抽出"],
+  "JSON v4 사용 (권장)": ["Use JSON v4 (recommended)", "JSON v4 を使用（推奨）"],
+  "JSON v4는 Google Play 비공개 테스트 Alpha 0.1.6 (9)에서 가져올 수 있습니다. 새 규칙과 일정은 OFF로 저장됩니다. 필요한 규칙, 일정 및 감시 앱을 확인한 뒤 앱에서 켜세요.": ["Import JSON v4 with Google Play closed-test Alpha 0.1.6 (9). New rules and schedules are saved disabled. Review and enable the rules, schedules and monitored apps you need.", "JSON v4 は Google Play クローズドテストの Alpha 0.1.6 (9) でインポートできます。新しいルールとスケジュールは無効で保存されます。必要なルール・スケジュール・監視アプリを確認して有効にしてください。"],
+  "추출할 필드 목록": ["Fields to extract", "抽出フィールド一覧"],
+  "TEXT_PATTERN은 한 필드 안에서 ASCII 대소문자를 구분하지 않습니다. |는 대안, &는 같은 필드의 필수 조건, ~는 공백 0개 이상, *와 **는 한 줄과 여러 줄, #·#+·#3은 각각 숫자 1개·1개 이상·1~3개입니다. 특수문자는 역슬래시로 이스케이프합니다. NOT_TEXT_PATTERN은 값이 있을 때만 불일치를 검사합니다.": ["TEXT_PATTERN searches one field ignoring ASCII case. Use | for alternatives, & for requirements in that field, ~ for optional whitespace, * within a line, ** across lines, and #, #+, #3 for one, one or more, or one to three digits. Escape special characters with a backslash. NOT_TEXT_PATTERN requires a present, nonmatching field.", "TEXT_PATTERN は同一フィールド内を ASCII 大文字小文字を区別せず検索します。| は選択、& は同一フィールド内の必須条件、~ は空白0個以上、* は1行、** は複数行、#・#+・#3 は数字1個・1個以上・1～3個です。特殊文字はバックスラッシュでエスケープします。NOT_TEXT_PATTERN は値が存在し一致しない場合のみ有効です。"],
+  "이 항목의 조건 목록 (비우면 위 조건 사용)": ["Conditions for this item (leave blank to use the form above)", "この項目の条件（空欄なら上の条件を使用）"],
+  "일반 규칙 평가 시점": ["When to evaluate this rule", "通常ルールの評価時点"],
+  "상태 처리 후": ["After state tracking", "状態更新後"],
+  "상태 처리 전": ["Before state tracking", "状態更新前"],
+  "고유 사건 또는 대상 필드 이름": ["Event or target field reference", "イベントまたは対象のフィールド名"],
+  "집계 그룹 필드 이름 (선택)": ["Optional group field reference", "集計グループのフィールド名（任意）"],
+  "추출 필드를 확인하세요.": ["Check the extraction fields.", "抽出フィールドを確認してください。"],
+  "평가 시점을 확인하세요.": ["Check the rule phase.", "評価時点を確認してください。"],
   "깨알 알림 규칙과 일정을 만들고 예시 알림으로 규칙을 시험하세요. 앱 설정 도움말과 AI용 규칙 작성 지침을 제공합니다.": [
     "Create notification rules and schedules, try sample alerts, and find app setup help and AI instructions.",
     "通知ルールとスケジュールを作成し、サンプル通知で試せます。アプリの設定方法とAI向けガイドも用意しています。"
@@ -231,14 +251,6 @@ export const pageStrings = {
     "Title",
     "タイトル"
   ],
-  "파싱한 IP": [
-    "Parsed IP address",
-    "解析されたIPアドレス"
-  ],
-  "파싱한 원본 사건 ID": [
-    "Parsed original event ID",
-    "解析された元のイベントID"
-  ],
   "접두사": [
     "Prefix",
     "接頭辞"
@@ -395,10 +407,7 @@ export const pageStrings = {
     "Separate dates with commas or line breaks",
     "日付をカンマまたは改行で区切る"
   ],
-  "고급 묶음은 JSON v3 지원 앱이 필요합니다. 대한민국 Google Play 비공개 테스트 Alpha 0.1.5 (8)에서 v3 가져오기를 확인했습니다. Alpha 7 등 이전 버전에서는 앱이 지원하는 v1·v2를 사용하세요. 묶음 항목은 꺼진 상태로 추가됩니다.": [
-    "Advanced bundles require a v3-compatible app. v3 import was verified on Alpha 0.1.5 (8) in the South Korea Google Play closed test. With Alpha 7 or earlier, use the v1 or v2 format your app supports. Bundle items are added disabled.",
-    "高度なまとめにはJSON v3対応アプリが必要です。韓国のGoogle Playクローズドテスト版Alpha 0.1.5 (8)でv3のインポートを確認しました。Alpha 7以前ではアプリが対応するv1またはv2をご利用ください。まとめの項目は無効な状態で追加されます。"
-  ],
+  "고급 묶음은 기본으로 JSON v4를 생성합니다. v4를 끄면 호환용 범용 v3 묶음을 만들 수 있습니다. 이전 앱에서는 설치한 버전이 지원하는 형식을 사용하세요.": ["Advanced bundles generate JSON v4 by default. Turn off v4 to generate a generic v3 bundle for compatibility. On earlier releases, use a format your installed app supports.", "高度なまとめは既定で JSON v4 を生成します。v4 をオフにすると互換用の汎用 v3 を生成できます。旧版ではインストール済みアプリが対応する形式を使ってください。"],
   "입력한 항목을 묶음에 추가": [
     "Add the current items to the bundle",
     "入力した項目をまとめに追加"
@@ -551,10 +560,7 @@ export const pageStrings = {
     "Preview of advanced bundles",
     "高度なまとめのプレビュー"
   ],
-  "고급 묶음에서 일반 규칙·최초 몇 건 무시·같은 대상의 재알람 대기·일정을 차례로 추가하고 JSON을 만드세요. 앱에서 가져올 때 새 항목은 꺼진 상태입니다. 대한민국 Google Play 비공개 테스트 Alpha 0.1.5 (8)에서 v3 가져오기를 확인했습니다. Alpha 7 등 이전 버전에서는 앱이 지원하는 v1·v2를 사용하세요.": [
-    "Add ordinary rules, rules that ignore the first events, waits for the same target, and schedules one at a time, then generate JSON. The app imports new items disabled. v3 import was verified on Alpha 0.1.5 (8) in the South Korea Google Play closed test. With Alpha 7 or earlier, use the v1 or v2 format your app supports.",
-    "通常ルール、最初の数件を無視するルール、同じ対象の再アラーム待機、スケジュールを順に追加し、JSONを作成します。新しい項目はアプリで無効な状態で追加されます。韓国のGoogle Playクローズドテスト版Alpha 0.1.5 (8)でv3のインポートを確認しました。Alpha 7以前ではアプリが対応するv1またはv2をご利用ください。"
-  ],
+  "깨알은 지정한 조건으로 알림을 평가합니다. 고급 묶음에서 일반·제외 규칙, 최초 몇 건 무시, 대상별 재알람 대기와 일정을 조합하세요. JSON v4를 비공개 테스트 Alpha 0.1.6 (9)로 가져오면 새 항목은 OFF입니다. 대상 앱을 감시 목록에 등록하고 필요한 규칙·일정과 감시를 켜세요.": ["KAEALert evaluates notifications using your conditions. Combine ordinary and exclusion rules, first-event suppression, per-target waits and schedules in an advanced bundle. In closed-test Alpha 0.1.6 (9), new v4 items are imported disabled. Register the target app and enable the rules, schedules and monitoring you need.", "KAEALert は指定条件で通知を評価します。高度なまとめで通常・除外ルール、最初の数件の抑制、対象別の待機、スケジュールを組み合わせます。クローズドテスト Alpha 0.1.6 (9) の v4 インポートは無効で保存されます。対象アプリを登録し、必要なルール・スケジュール・監視を有効にしてください。"],
   "붙여넣은 JSON은 브라우저 안에서 검사합니다. 등록 앱, 남은 한도, Pro와 기존 규칙 중복 여부는 앱에서 확인합니다. 일부 앱이 기존 호환 방식으로 처리되는 동안에는 상태형 규칙을 켜지 못할 수 있습니다.": [
     "The browser validates pasted JSON locally. The app checks registered apps, available slots, Pro access, and duplicates. Stateful rules may be unavailable for apps that still use the legacy compatibility path.",
     "貼り付けたJSONはブラウザ内で検証します。登録済みアプリ、残りの枠、Proの利用権限、既存ルールとの重複はアプリで確認します。従来の互換処理を使うアプリでは、状態を持つルールを有効にできない場合があります。"
@@ -755,10 +761,7 @@ export const pageStrings = {
     "adds the items to the rule and schedule lists. For a linked import, compare the schedule's name in both lists and check both switches.",
     "を選び、ルール・スケジュール一覧で確認します。関連付けて追加した場合は両方の一覧でスケジュール名を照合し、両方のスイッチを確認してください。"
   ],
-  "가져오기는 새 항목을 추가하며 기존 규칙이나 일정을 교체하지 않습니다. Backup v7 파일은 앱의 백업 복원에서 사용합니다.": [
-    "Import adds new items and preserves existing rules and schedules. Open Backup v7 files with the app's backup restore feature.",
-    "インポートでは既存のルールやスケジュールを保持したまま新しい項目を追加します。Backup v7のファイルはアプリのバックアップ復元で開きます。"
-  ],
+  "규칙 가져오기는 지원되는 범용 JSON v1~4의 새 항목을 추가합니다. 구형 v3의 업무 전용 키·조건은 거부됩니다. Backup은 앱의 별도 복원 기능에서 열며, 지원할 수 없는 구형 업무 전용 Backup은 데이터 교체 전에 거부됩니다.": ["Rule import adds new items from supported generic JSON v1–4. Legacy work-specific v3 keys and conditions are rejected. Open backups with the separate restore feature. Unsupported legacy work-specific backups are rejected before data is replaced.", "ルールのインポートは対応する汎用 JSON v1～4 から新しい項目を追加します。旧 v3 の業務専用キー・条件は拒否されます。バックアップは別の復元機能で開きます。未対応の旧業務専用バックアップはデータを置き換える前に拒否されます。"],
   "자주 묻는 질문": [
     "Frequently asked questions",
     "よくある質問"
@@ -919,10 +922,7 @@ export const pageStrings = {
     "Rules → Import JSON → Preview",
     "ルール → JSONをインポート → 内容を確認"
   ],
-  "에서 검토한 뒤 저장하세요. 웹에서는 v1·v2와 미리보기용 v3의 형식을 검사할 수 있습니다.": [
-    "and review the JSON before saving. The web tool validates v1, v2 and preview v3 syntax.",
-    "を開き、受け取ったJSONを確認してから保存します。ウェブではv1・v2とプレビュー用v3を検証できます。"
-  ],
+  "에서 검토한 뒤 저장하세요. 웹은 지원하는 범용 JSON v1~4를 검사하며, v4 가져오기는 Alpha 0.1.6 (9)에서 지원합니다. 외부 AI에는 합성 예시를 사용하세요.": ["to review and save. The web tool validates supported generic JSON v1–4. Import v4 with Alpha 0.1.6 (9). Use synthetic examples with external AI tools.", "で確認して保存します。ウェブでは対応する汎用 JSON v1～4 を検証でき、v4 のインポートは Alpha 0.1.6 (9) が対応します。外部 AI には架空の例を使ってください。"],
   "가져오기 도움말": [
     "Import help",
     "インポートのヘルプ"
@@ -947,9 +947,9 @@ export const pageStrings = {
     "Request",
     "依頼"
   ],
-  "org.telegram.messenger의 본문에 ‘장애’가 있으면 알람을 울려 줘.": [
-    "Sound an alarm when the body from org.telegram.messenger contains “장애”.",
-    "org.telegram.messengerの本文に「장애」があればアラームを鳴らしてください。"
+  "org.example.synthetic의 본문에 ‘장애’가 있으면 알람을 울려 줘.": [
+    "Sound an alarm when the body from org.example.synthetic contains “장애”.",
+    "org.example.syntheticの本文に「장애」があればアラームを鳴らしてください。"
   ],
   "특정 단어 제외": [
     "Exclude a word",

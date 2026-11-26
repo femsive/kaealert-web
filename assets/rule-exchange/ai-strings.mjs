@@ -1,7 +1,7 @@
 export const guides = {
-  en: String.raw`KAEALert rule and schedule instructions · JSON v1, v2 and v3
+  en: String.raw`KAEALert rule and schedule instructions · JSON v1, v2, v3 and v4
 
-Turn a clear, supported request into exactly one JSON object. Omit prose, Markdown fences, comments, duplicate keys and trailing commas. Ask only for missing information. Check the installed app's supported format first. v3 import was verified on Alpha 0.1.5 (8) in the South Korea Google Play closed test. For Play Alpha 7 or earlier, use only the supported v1/v2 format. Use v3 only after confirming app support.
+Turn a clear, supported request into exactly one JSON object. Omit prose, Markdown fences, comments, duplicate keys and trailing commas. Ask only for missing information. Check the installed app's supported format first. Follow the v4 instructions above for new advanced bundles on Alpha 0.1.6 (9). The v1–3 instructions below are for compatibility. For Play Alpha 7 or earlier, use only the v1/v2 format supported by the installed app.
 
 Format and version
 - Use "format":"kaealert-rule-exchange" and numeric formatVersion. v1 has format, formatVersion and rule. v2 has format, formatVersion, schedule and optional rule. In v2 schedule.ref and any rule.scheduleRef are both "s1". v1 has no scheduleRef.
@@ -32,7 +32,7 @@ Advanced bundles · v3-compatible apps only
 - Each stateful rule requires type, name, sourcePackage (confirmed registered app, never null), conditions, and optional match and exclude. exclude is {conditions,match?} using the same limits. action and flowControl belong only to ordinary rules.
 - FIRST_OCCURRENCES requires integer n (0–100), eventKey and scheduleRef. groupKey is optional. It suppresses the first N unique events within the scheduled window. It does not count a repeated event as new.
 - RECEPTION_WAIT requires integer seconds (0–86400) and targetKey. scheduleRef is optional. Compare against the last qualifying notification for that target. A qualifying repeat before the boundary is suppressed and restarts the wait. At the boundary, continue to ordinary rules.
-- Use a key object {field:"BODY",prefix:"target=",token:"ASCII_TOKEN"} for TITLE or BODY. Split on semicolons and match one prefix at the start of a segment. prefix is 1–32 units without semicolons or controls. ASCII_ALNUM accepts 1–16 ASCII letters or digits. ASCII_TOKEN accepts 1–128 letters, digits, underscores, dots or hyphens. Multiple matching segments or a missing value produce no key. For parsed keys use only {field:"IP"} or {field:"ORIGINAL_EVENT_ID"}, without prefix, token or a custom capture pattern.
+- Use a key object {field:"BODY",prefix:"target=",token:"ASCII_TOKEN"} for TITLE or BODY. Split on semicolons and match one prefix at the start of a segment. prefix is 1–32 units without semicolons or controls. ASCII_ALNUM accepts 1–16 ASCII letters or digits. ASCII_TOKEN accepts 1–128 letters, digits, underscores, dots or hyphens. Multiple matching segments or a missing value produce no key.
 - Evaluation order is winning common exclusion → first N → wait by target → ordinary rules. Suppression at first N does not reach the wait stage. Clearing both stages does not guarantee an alarm. Clock reversal or storage failure rolls back uncertain changes and continues ordinary evaluation.
 
 Before answering
@@ -44,9 +44,9 @@ Valid v3 example (wait for the same target and ordinary allow)
 
 Rejected v3 example (HALT is not supported)
 {invalid}`,
-  ja: String.raw`KAEALert ルール・スケジュール生成ガイド · JSON v1・v2・v3
+  ja: String.raw`KAEALert ルール・スケジュール生成ガイド · JSON v1・v2・v3・v4
 
-対応する明確な依頼をJSONオブジェクト1つに変換します。前後の説明、Markdownコード枠、コメント、重複キー、末尾のカンマは出力しません。不足する情報だけを確認します。インストール済みアプリの対応形式を先に確認します。韓国のGoogle Playクローズドテスト版Alpha 0.1.5 (8)でv3のインポートを確認しました。Play Alpha 7以前では対応するv1またはv2を使います。v3は対応を確認してから使います。
+対応する明確な依頼をJSONオブジェクト1つに変換します。前後の説明、Markdownコード枠、コメント、重複キー、末尾のカンマは出力しません。不足する情報だけを確認します。インストール済みアプリの対応形式を先に確認します。Alpha 0.1.6 (9) 用の新しい高度なまとめは上記の v4 に従います。以下の v1～3 は互換用です。Play Alpha 7 以前には、インストール済みアプリが対応する v1・v2 のみを使います。
 
 形式とバージョン
 - "format":"kaealert-rule-exchange" と数値のformatVersionを使います。v1の項目はformat、formatVersion、ruleです。v2はformat、formatVersion、schedule、任意のruleです。v2ではschedule.refとrule.scheduleRefに同じ "s1" を使います。v1にscheduleRefはありません。
@@ -77,7 +77,7 @@ Rejected v3 example (HALT is not supported)
 - 状態を持つルールではtype、name、sourcePackage（登録済みの正確なアプリ、null不可）、conditionsが必須です。matchとexcludeは任意です。excludeは同じ条件制約の {conditions,match?} です。actionとflowControlは通常ルール専用です。
 - FIRST_OCCURRENCESではn（整数0～100）、eventKey、scheduleRefが必須で、groupKeyは任意です。スケジュールの有効時間内で最初のN個の一意なイベントを抑制します。繰り返し届く同じイベントを新規には数えません。
 - RECEPTION_WAITではseconds（整数0～86400）、targetKeyが必須で、scheduleRefは任意です。同じ対象で最後に条件を満たした通知から計測します。境界より前の適格な通知は抑制され、待機基準時刻が更新されます。境界に達したら通常判定に進みます。
-- キーには {field:"BODY",prefix:"target=",token:"ASCII_TOKEN"} のようにTITLEまたはBODYを指定できます。セミコロンで区切った各項目の先頭で接頭辞を照合します。prefixはセミコロンと制御文字を除いた1～32単位です。ASCII_ALNUMはASCII英数字1～16文字、ASCII_TOKENはASCII英数字・アンダースコア・ピリオド・ハイフン1～128文字です。複数項目が一致するか値がなければキーを抽出できません。解析済みキーは {field:"IP"} または {field:"ORIGINAL_EVENT_ID"} だけを使い、prefix、token、独自キャプチャは付けません。
+- キーには {field:"BODY",prefix:"target=",token:"ASCII_TOKEN"} のようにTITLEまたはBODYを指定できます。セミコロンで区切った各項目の先頭で接頭辞を照合します。prefixはセミコロンと制御文字を除いた1～32単位です。ASCII_ALNUMはASCII英数字1～16文字、ASCII_TOKENはASCII英数字・アンダースコア・ピリオド・ハイフン1～128文字です。複数項目が一致するか値がなければキーを抽出できません。
 - 評価順は最終判定となる共通除外 → 最初のN件 → 対象別待機 → 通常ルールです。最初のN件で抑制した場合は待機を更新しません。両方の段階を通過しても通常ルールが最終判定します。時計の逆行または保存失敗時は今回の状態変更を取り消し、通常判定を続けます。
 
 回答前の確認

@@ -1,6 +1,6 @@
 import { localize, t } from './i18n.mjs';
 import { decodeExchange, ExchangeError } from './exchange.mjs';
-import { BUNDLE_LIMITS, parseRuleDocument, serializeBundle } from './mixed-exchange.mjs';
+import { BUNDLE_LIMITS, checkFields, parseRuleDocument, serializeBundle } from './mixed-exchange.mjs';
 
 const ko = {
   add: '묶음에 추가했습니다.',
@@ -79,8 +79,18 @@ export function bindMixed({ readRule, readSchedule, renderJson, show, showError,
     const box = byId(id);
     const [field, token] = box.querySelectorAll('select');
     if (!field.value) return undefined;
-    if (!['TITLE', 'BODY'].includes(field.value)) return { field: field.value };
     return { field: field.value, prefix: box.querySelector('input').value, token: token.value };
+  }
+
+  function fragment(id) {
+    const text = byId(id).value;
+    if (new TextEncoder().encode(text).length > 65536) throw new ExchangeError('SIZE', id, '추출 필드를 확인하세요.');
+    const parsed = decodeExchange('{"formatVersion":4,"value":' + text + '}', 8);
+    if (!parsed.unsignedIntegerTokensOnly) throw new ExchangeError('VALUE', id, ko.integer);
+    return parsed.document.value;
+  }
+  function serialize(items) {
+    return serializeBundle(byId('use-v4').checked ? { ...items, fields: fragment('v4-fields') } : items);
   }
 
   function append() {
@@ -97,9 +107,11 @@ export function bindMixed({ readRule, readSchedule, renderJson, show, showError,
     if (rulesSelected()) {
       const { action, name, sourcePackage, conditions, match } = readRule();
       const base = { name, sourcePackage, conditions, match, enabled: false };
+      const advanced = byId('use-v4').checked;
+      if (advanced && byId('v4-conditions').value.trim()) base.conditions = fragment('v4-conditions');
       if (scheduleRef) base.scheduleRef = scheduleRef;
       if (kind() === 'ordinary') {
-        next.rules.push({ ...base, action, flowControl: byId('mixed-flow').value });
+        next.rules.push({ ...base, ...(advanced ? { phase: byId('v4-phase').value } : {}), action, flowControl: byId('mixed-flow').value });
       } else {
         const first = kind() === 'FIRST_OCCURRENCES';
         const field = first ? 'n' : 'seconds';
@@ -107,11 +119,11 @@ export function bindMixed({ readRule, readSchedule, renderJson, show, showError,
         if (!/^(?:0|[1-9][0-9]*)$/u.test(amount)) throw new ExchangeError('VALUE', field, ko.integer);
         const draft = { ...base, type: kind(), [field]: Number(amount) };
         if (first) {
-          draft.eventKey = readKey('mixed-event');
-          const group = readKey('mixed-group');
+          draft.eventKey = advanced ? {fieldRef: byId('v4-key').value} : readKey('mixed-event');
+          const group = advanced ? (byId('v4-group').value ? {fieldRef: byId('v4-group').value} : null) : readKey('mixed-group');
           if (group) draft.groupKey = group;
         } else {
-          draft.targetKey = readKey('mixed-target');
+          draft.targetKey = advanced ? {fieldRef: byId('v4-key').value} : readKey('mixed-target');
         }
         const exclude = byId('mixed-exclude').value;
         if (exclude.trim()) {
@@ -125,13 +137,34 @@ export function bindMixed({ readRule, readSchedule, renderJson, show, showError,
         next.statefulRules.push(draft);
       }
     }
-    serializeBundle(next);
+    serialize(next);
     Object.assign(bundle, next);
     listAndInvalidate();
     if (scheduleRef) byId('mixed-schedule').value = scheduleRef;
     show('form-status', ko.add, 'ok');
   }
 
+  byId('v4-add-field').addEventListener('click', () => {
+    try {
+      const fields = fragment('v4-fields');
+      const row = {ref:byId('v4-ref').value,input:byId('v4-input').value,label:byId('v4-label').value,
+        separator:byId('v4-separator').value};
+      if (byId('v4-piece').value) {
+        if (!/^(0|[1-9][0-9]{0,2})$/u.test(byId('v4-index').value)) throw new ExchangeError('VALUE','index',ko.integer);
+        row.columnSeparator = byId('v4-piece').value;
+        row.index = Number(byId('v4-index').value);
+      }
+      if (!Array.isArray(fields)) throw new ExchangeError('VALUE','fields','추출 필드를 확인하세요.');
+      const next = [...fields,row];
+      checkFields(next);
+      byId('v4-fields').value = JSON.stringify(next,null,2);
+      invalidate();
+      show('form-status',ko.add,'ok');
+    } catch (error) {
+      if (!(error instanceof ExchangeError)) throw error;
+      showError('form-status',error);
+    }
+  });
   byId('mixed-add').addEventListener('click', () => {
     try { append(); } catch (error) {
       if (!(error instanceof ExchangeError)) throw error;
@@ -150,5 +183,5 @@ export function bindMixed({ readRule, readSchedule, renderJson, show, showError,
       showError('load-status', error);
     }
   });
-  return { active, sync, serialize: () => serializeBundle(bundle) };
+  return { active, sync, serialize: () => serialize(bundle) };
 }
